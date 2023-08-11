@@ -1,16 +1,5 @@
-**Title:** Automate Deployments to GitHub Pages and Vercel
+## Acceptance criteria to ensure both successful test execution and deployment to GitHub Pages or Vercel:
 
-**As a** Developer,
-**I want** to automate the deployment process for our web system to both GitHub Pages and Vercel,
-**So that** new changes are automatically deployed to these platforms after a successful build and testing cycle.
-
-#### Story Points:
-**Points**: 10
-
-#### Assignee:
-**Name**: Charitaa
-
-### Acceptance Criteria:
 - **Given** a successful build and passing Playwright tests on the `main` branch,
 - **When** changes are pushed or merged into the `main` branch,
 - **Then** an automated deployment process is triggered for GitHub Pages and Vercel.
@@ -50,3 +39,12 @@
 - **Given** a successful deployment on either GitHub Pages or Vercel,
 - **When** new changes are deployed,
 - **Then** the previous deployment artifacts are properly archived or removed to avoid clutter and maintain a clean deployment history.
+
+- **Given** a successful deployment,
+- **When** accessing the deployed web system on GitHub Pages or Vercel,
+- **Then** the web system is functional, responsive, and behaves as expected based on the latest changes.
+
+- **Given** the automated deployment process,
+- **When** changes are made to the deployment workflow or infrastructure,
+- **Then** the changes are reviewed and tested to ensure they do not introduce regressions or issues in the deployment process.
+
