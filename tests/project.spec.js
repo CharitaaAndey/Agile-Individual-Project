@@ -11,21 +11,14 @@ test('Page title should be "Hello Professor"', async ({ page }) => {
   expect(pageTitle).toBe('Hello Professor');
 });
 
-test('Page title matches Figma mockup', async ({ page }) => {
+test('Page title element has correct text content', async ({ page }) => {
   // Navigate to the homepage
   await page.goto(nextjstest);
 
-  // Verify the page title font, size, color, etc. (use your Figma specs)
-  // You might need to use selectors that correspond to the title element in the Figma design
+  // Get the title element's text content
+  const titleElement = await page.$('h1');
+  const titleText = await titleElement.textContent();
 
-  // For example (this is a hypothetical example)
-  const titleElement = await page.$('.title-selector');
-  const titleFont = await titleElement.evaluate(el => getComputedStyle(el).fontFamily);
-  const titleSize = await titleElement.evaluate(el => getComputedStyle(el).fontSize);
-  const titleColor = await titleElement.evaluate(el => getComputedStyle(el).color);
-
-  // You can add more assertions for other design properties as needed
-  expect(titleFont).toBe('ExpectedFontFamily');
-  expect(titleSize).toBe('ExpectedFontSize');
-  expect(titleColor).toBe('ExpectedColor');
+  // Verify the text content of the title element
+  expect(titleText).toBe('Hello Professor');
 });
