@@ -1,25 +1,24 @@
 const { test, expect } = require('@playwright/test');
 
-// Change this URL to match your local Next.js server's URL
 const nextjstest = 'http://localhost:3000/';
 
-test('Homepage content', async ({ page }) => {
+test('Page title should be "Hello Professor"', async ({ page }) => {
   // Navigate to the homepage
   await page.goto(nextjstest);
 
-  // Verify the presence of heading and paragraph elements
-  const heading = await page.$('h1');
-  const paragraph = await page.$('p');
+  // Verify the title text in the browser tab
+  const pageTitle = await page.title();
+  expect(pageTitle).toBe('Hello Professor');
+});
 
-  // Assert that the heading and paragraph elements are present
-  expect(heading).toBeTruthy();
-  expect(paragraph).toBeTruthy();
+test('Page title element has correct text content', async ({ page }) => {
+  // Navigate to the homepage
+  await page.goto(nextjstest);
 
-  // Get the text content of the heading and paragraph elements
-  const headingText = await heading.textContent();
-  const paragraphText = await paragraph.textContent();
+  // Get the title element's text content
+  const titleElement = await page.$('h1');
+  const titleText = await titleElement.textContent();
 
-  // Verify the text content of the elements
-  expect(headingText).toBe('Welcome to My Web System!');
-  expect(paragraphText).toBe('This is the homepage of our web system project.');
+  // Verify the text content of the title element
+  expect(titleText).toBe('Hello Professor');
 });
