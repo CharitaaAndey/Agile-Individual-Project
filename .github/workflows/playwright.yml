@@ -1,27 +1,67 @@
 name: Playwright Tests
+
 on:
-  push:
-    branches: [ main, master ]
   pull_request:
-    branches: [ main, master ]
+    branches:
+      - main
+
 jobs:
   test:
-    timeout-minutes: 60
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 18
-    - name: Install dependencies
-      run: npm ci
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test
-    - uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Playwright tests
+        id: playwright-tests
+        run: npx playwright test --reporter=list
+
+      - name: Calculate test results
+        id: calculate-results
+        run: |
+          passedTests=$(grep -oP '\d+(?=\.\s+passed)' ${{ steps.playwright-tests.outputs.stdout }})
+          totalTests=$(grep -oP '\d+(?=\.\s+total)' ${{ steps.playwright-tests.outputs.stdout }})
+          passPercentage=$(( passedTests * 100 / totalTests ))
+
+          echo "Tests Passed: $passedTests"
+          echo "Total Tests: $totalTests"
+          echo "Pass Percentage: $passPercentage%"
+
+          if [ "$passPercentage" -eq 100 ]; then
+            echo "All tests passed!"
+          else
+            echo "No test passed. Better luck next time!"
+          fi
+
+      - name: Set status check
+        if: always()
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const context = github.context.payload.pull_request.head.repo;
+            const status = ${{ job.status }};
+            const conclusion = status === 'success' ? 'success' : 'failure';
+            const message = status === 'success' ? 'All tests passed!' : 'No test passed. Better luck next time!';
+
+            github.checks.create({
+              owner: context.owner.login,
+              repo: context.name,
+              name: 'Playwright Tests',
+              head_sha: context.default_branch,
+              status: 'completed',
+              conclusion: conclusion,
+              output: {
+                title: 'Playwright Test Results',
+                summary: message,
+              }
+            });
