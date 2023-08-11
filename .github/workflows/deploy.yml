@@ -1,0 +1,35 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Your deployment steps go here...
+
+  notify-deployment:
+    needs: deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Notify deployment success
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const comment = "🚀 Deployment to GitHub Pages successful!";
+            const octokit = new Octokit();
+            await octokit.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
